@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">DataFeeds</string>
+    <string name="refresh">Refresh</string>
+</resources>
