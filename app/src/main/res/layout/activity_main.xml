@@ -8,13 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.monohelixlabs.datafeeds.MainActivity">
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="128dp"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name" />
+    tools:context="com.rirozizo.autohome.MainActivity">
 
     <ListView
         android:id="@android:id/list"
@@ -37,4 +31,17 @@
         android:layout_marginRight="-3dp"
         android:onClick="refresh"
         android:text="@string/refresh" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="128dp"
+        android:layout_height="64dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="148dp"
+        android:layout_marginRight="145dp"
+        android:onClick="dashboard"
+        android:text="@string/Dashboard" />
 </RelativeLayout>

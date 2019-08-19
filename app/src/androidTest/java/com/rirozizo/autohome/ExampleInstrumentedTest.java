@@ -1,4 +1,4 @@
-package com.monohelixlabs.datafeeds;
+package com.rirozizo.autohome;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

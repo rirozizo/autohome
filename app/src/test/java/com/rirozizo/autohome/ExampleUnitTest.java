@@ -1,4 +1,4 @@
-package com.monohelixlabs.datafeeds;
+package com.rirozizo.autohome;
 
 import org.junit.Test;
 

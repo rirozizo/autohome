@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">DataFeeds</string>
+    <string name="app_name">Auto Home</string>
     <string name="refresh">Refresh</string>
+    <string name="Dashboard">Dashboard</string>
 </resources>

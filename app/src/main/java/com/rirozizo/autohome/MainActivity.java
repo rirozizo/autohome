@@ -1,8 +1,7 @@
-package com.monohelixlabs.datafeeds;
+package com.rirozizo.autohome;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import java.io.BufferedReader;
@@ -18,11 +17,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ListActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends AppCompatActivity {
 
     public MainActivity(){}
 
@@ -42,6 +42,11 @@ public class MainActivity extends ListActivity {
 
     public void refresh(View v) {
         new RESTApiManager().execute();
+    }
+
+    public void dashboard(View v) {
+        Intent intent = new Intent(this, DashBoard.class);
+        startActivity(intent);
     }
 
 
