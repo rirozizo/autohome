@@ -1,6 +1,7 @@
 package com.rirozizo.autohome;
 
 import android.os.AsyncTask;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,6 +34,10 @@ public class DashBoard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
 
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         sw = (Switch) findViewById(R.id.switch1);
         //sw.setText("test");
 
@@ -45,13 +50,14 @@ public class DashBoard extends AppCompatActivity {
 
 
     public void put(View v) throws IOException {
-        /*URL url = new URL("https://io.adafruit.com/api/feeds?x-aio-key=");
+        /*URL url = new URL("https://io.adafruit.com/api/v2/username/feeds/feedkey");
         HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
         httpCon.setDoOutput(true);
         httpCon.setRequestMethod("PUT");
+        httpCon.setRequestProperty("X-AIO-Key: ","");
         OutputStreamWriter out = new OutputStreamWriter(
                 httpCon.getOutputStream());
-        out.write("Data you want to put");
+        out.write("ON");
         out.close();*/
     }
 
