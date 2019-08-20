@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
                 for (int i = 0; i < json.length(); i++) {
                     JSONObject feed = json.getJSONObject(i);
-                    listItems.add(feed.getString("name") + ": " + feed.get("last_value"));
+                    listItems.add(feed.getString("name") + ", " + feed.get("last_value"));
                 }
 
             } catch (JSONException e) {

@@ -2,4 +2,5 @@
     <string name="app_name">Auto Home</string>
     <string name="refresh">Refresh</string>
     <string name="Dashboard">Dashboard</string>
+    <string name="Empty"></string>
 </resources>

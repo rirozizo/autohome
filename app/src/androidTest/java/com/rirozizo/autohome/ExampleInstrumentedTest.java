@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.monohelixlabs.datafeeds", appContext.getPackageName());
+        assertEquals("com.rirozizo.autohome", appContext.getPackageName());
     }
 }
