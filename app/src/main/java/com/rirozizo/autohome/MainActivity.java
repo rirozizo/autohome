@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //setListAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, this.fetchTwitterPublicTimeline()));
 
-        lv = (ListView)findViewById(android.R.id.list);
+        lv = (ListView)findViewById(R.id.listView);
 
         new RESTApiManager().execute();
     }

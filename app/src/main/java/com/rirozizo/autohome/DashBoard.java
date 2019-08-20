@@ -15,7 +15,10 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -38,6 +41,18 @@ public class DashBoard extends AppCompatActivity {
 
     public void refresh(View v) {
         new DashBoard.RESTApiManager().execute();
+    }
+
+
+    public void put(View v) throws IOException {
+        /*URL url = new URL("https://io.adafruit.com/api/feeds?x-aio-key=");
+        HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+        httpCon.setDoOutput(true);
+        httpCon.setRequestMethod("PUT");
+        OutputStreamWriter out = new OutputStreamWriter(
+                httpCon.getOutputStream());
+        out.write("Data you want to put");
+        out.close();*/
     }
 
     private class RESTApiManager extends AsyncTask<String, Void, String> {
@@ -92,27 +107,31 @@ public class DashBoard extends AppCompatActivity {
                 // manage exceptions
             }
 
-            String s = result.substring(result.indexOf('\n')+9);
-            String[] lines = s.split("\n");
-            String[] dataLines = Arrays.copyOfRange(lines, 0, lines.length - 2);
+            if (result.length() > 0)
+            {
+                String s = result.substring(result.indexOf('\n')+9);
+                String[] lines = s.split("\n");
+                String[] dataLines = Arrays.copyOfRange(lines, 0, lines.length - 2);
 
-            dataLines[1] = dataLines[1].substring(result.indexOf('\n')+4);
-            //Log.i("AFTER EDITS", dataLines[1]);
-            String[] name = dataLines[1].split(":");
-            String[] status = dataLines[6].split(":");
-            //Log.i("AFTER SPLIT 1", name[0]);
-            //Log.i("AFTER SPLIT 2", name[1]);
-            name[1] = name[1].replace("\"","");
-            name[1] = name[1].replace(",","");
-            status[1] = status[1].replace("\"","");
-            status[1] = status[1].replace(",","");
-            sw.setText(name[1]);
-            Log.i("SSS", status[1]);
-            if (status[1].equals("ON")) {
-                sw.setChecked(true);
-            } else {
-                sw.setChecked(false);
+                dataLines[1] = dataLines[1].substring(result.indexOf('\n')+4);
+                //Log.i("AFTER EDITS", dataLines[1]);
+                String[] name = dataLines[1].split(":");
+                String[] status = dataLines[6].split(":");
+                //Log.i("AFTER SPLIT 1", name[0]);
+                //Log.i("AFTER SPLIT 2", name[1]);
+                name[1] = name[1].replace("\"","");
+                name[1] = name[1].replace(",","");
+                status[1] = status[1].replace("\"","");
+                status[1] = status[1].replace(",","");
+                sw.setText(name[1]);
+                Log.i("SSS", status[1]);
+                if (status[1].equals("ON")) {
+                    sw.setChecked(true);
+                } else {
+                    sw.setChecked(false);
+                }
             }
+
 
             //Log.i("switch", "After If");
 
