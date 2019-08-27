@@ -14,16 +14,17 @@ A System to control any Home Equipment via a Raspberry Pi
 
 ## Hardware Guide
 ### On the Raspberry Pi
-WIP
+will fill this later
 ### Breadboard
-WIP
+will fill this later
 ### Relay
-WIP
+will fill this later
 ## Software Guide
-WIP
+will fill this later
 ### AdafruitIO
-WIP
+* Create an AdaFruit IO Account [HERE](https://accounts.adafruit.com/)
+* Go to io.adafruit.com
 ### IFTTT (Optional)
-WIP
+will fill this later
 ### Raspberry Pi
-WIP
+will fill this later
