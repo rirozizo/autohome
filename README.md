@@ -23,7 +23,7 @@ will fill this later
 will fill this later
 ### AdafruitIO
 * Create an AdaFruit IO Account [HERE](https://accounts.adafruit.com/)
-* Go to io.adafruit.com
+* Go to [io.adafruit.com](io.adafruit.com)
 ### IFTTT (Optional)
 will fill this later
 ### Raspberry Pi
