@@ -1,16 +1,39 @@
-# Example of using the MQTT client class to subscribe to a feed and print out
-# any changes made to the feed.	 Edit the variables below to configure the key,
-# username, and feed to subscribe to for changes.
+##############################################################################################################
+## AutoHome is a system that enables you to control any device at home using a Raspberry Pi, and AdafruitIO.##
+## You can also integrate IFTTT with AdafruitIO so you can control everything using Google Assistant.	    ##
+## You can find the project with README at github.com/rirozizo/AutoHome									    ##
+##############################################################################################################
 
-# Import standard python modules.
+#Importing needed libraries
 import sys
-
-# Import Adafruit IO MQTT client.
 from Adafruit_IO import MQTTClient
+import RPi.GPIO as GPIO
+
+#library for time and sleep, might need later
+#from time import sleep
+
+#Dummy relay pin number (GPIO number and NOT physical pins)
+ac_relay_pin = 26
+GPIO.setmode(GPIO.BCM)
+
+#Set GPIO pin to OUT
+GPIO.setup(ac_relay_pin, GPIO.OUT)
+
+#Give HIGH
+#GPIO.output(ac_relay_pin, 1)
+
+#Give LOW
+#GPIO.output(ac_relay_pin, 0)
+
+#Sleep for 5 seconds
+#sleep(5)
+
 
 # Set to your Adafruit IO key.
 # Remember, your key is a secret,
 # so make sure not to publish it when you publish this code!
+
+# I used a separate file to read the key from. This is done so that we don't expose the key in the code itself, but a separatefile
 f=open("aiokey.txt", "r")
 contents =f.read()
 contents = contents.strip()
@@ -32,8 +55,9 @@ def connected(client):
 	# passed to this function is the Adafruit IO MQTT client so you can make
 	# calls against it easily.
 	print('Connected to Adafruit IO!  Listening for {0} changes...'.format(FEED_ID))
-	# Subscribe to changes on a feed named DemoFeed.
+	# Subscribe to changes on the feed.
 	client.subscribe(FEED_ID)
+	# Get existing value from feed so we know the current status.
 	client.receive(FEED_ID)
 
 def disconnected(client):
@@ -52,6 +76,7 @@ def message(client, feed_id, payload):
 	##########################################
 	
 	if payload == "ON":
+		ac_control("ON")
 		print('it is definitely on')
 		
 	###########################################
@@ -59,7 +84,15 @@ def message(client, feed_id, payload):
 	###########################################
 	
 	if payload == "OFF":
+		ac_control("OFF")
 		print('it is definitely OFF MAN')
+		
+def ac_control(control):
+	if control == "ON":
+		GPIO.output(ac_relay_pin, 1)
+	if control == "OFF":
+		GPIO.output(ac_relay_pin, 0)
+
 
 
 # Create an MQTT client instance.
@@ -80,3 +113,4 @@ try:
 	 client.loop_blocking()
 except:
 	 print('\nExited Successfully \n')
+	 GPIO.cleanup()
