@@ -25,11 +25,11 @@ A more basic way of doing things is to just find any way to send the data to Ada
 
 ## Hardware Guide
 ### On the Raspberry Pi
-will fill this later
+This section will contain everything you need to know to plug your Raspberry Pi to the relay
 ### Breadboard
-will fill this later
+This section will contain everything you need to know to wire everything up from the Raspberry Pi to the relay
 ### Relay
-will fill this later
+This section will contain everything you need to know to properly setup the wires on the relay
 ## Software Guide
 ### AdafruitIO
 * Create an AdaFruit IO Account [HERE](https://accounts.adafruit.com/)
@@ -66,4 +66,4 @@ Now you can turn your device On via the Google Assistant
 
 Now IFTTT communicates with AdaFruitIO via your commands sent to Google Assistant :)
 ### Raspberry Pi
-will fill this later
+This section will contain everything you need to know to program the Raspberry Pi to work with AdaFruit and the Relay so we can achieve what we want to do
