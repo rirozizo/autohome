@@ -45,7 +45,7 @@ ADAFRUIT_IO_KEY = contents
 ADAFRUIT_IO_USERNAME = 'rirozizo'
 
 # Set to the ID of the feed to subscribe to for updates.
-FEED_ID = 'ac'
+AC_FEED_ID = 'ac'
 
 
 # Define callback functions which will be called when certain events happen.
@@ -54,11 +54,11 @@ def connected(client):
 	# This is a good place to subscribe to feed changes.  The client parameter
 	# passed to this function is the Adafruit IO MQTT client so you can make
 	# calls against it easily.
-	print('Connected to Adafruit IO!  Listening for {0} changes...'.format(FEED_ID))
+	print('Connected to Adafruit IO!  Listening for {0} changes...'.format(AC_FEED_ID))
 	# Subscribe to changes on the feed.
-	client.subscribe(FEED_ID)
+	client.subscribe(AC_FEED_ID)
 	# Get existing value from feed so we know the current status.
-	client.receive(FEED_ID)
+	client.receive(AC_FEED_ID)
 
 def disconnected(client):
 	# Disconnected function will be called when the client disconnects.
