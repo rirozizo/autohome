@@ -7,17 +7,17 @@
 #Importing needed libraries
 import sys
 from Adafruit_IO import MQTTClient
-import RPi.GPIO as GPIO
+#TEMPimport RPi.GPIO as GPIO
 
 #library for time and sleep, might need later
 #from time import sleep
 
 #Dummy relay pin number (GPIO number and NOT physical pins)
 ac_relay_pin = 26
-GPIO.setmode(GPIO.BCM)
+#TEMPGPIO.setmode(GPIO.BCM)
 
 #Set GPIO pin to OUT
-GPIO.setup(ac_relay_pin, GPIO.OUT)
+#TEMPGPIO.setup(ac_relay_pin, GPIO.OUT)
 
 #Give HIGH
 #GPIO.output(ac_relay_pin, 1)
@@ -89,9 +89,11 @@ def message(client, feed_id, payload):
 		
 def ac_control(control):
 	if control == "ON":
-		GPIO.output(ac_relay_pin, 1)
+		pass
+		#TEMPGPIO.output(ac_relay_pin, 1)
 	if control == "OFF":
-		GPIO.output(ac_relay_pin, 0)
+		pass
+		#TEMPGPIO.output(ac_relay_pin, 0)
 
 
 
@@ -113,4 +115,4 @@ try:
 	 client.loop_blocking()
 except:
 	 print('\nExited Successfully \n')
-	 GPIO.cleanup()
+#TEMP	 GPIO.cleanup()
