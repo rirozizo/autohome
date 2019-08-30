@@ -46,6 +46,7 @@ ADAFRUIT_IO_USERNAME = 'rirozizo'
 
 # Set to the ID of the feed to subscribe to for updates.
 AC_FEED_ID = 'ac'
+AC_STATUS_FEED_ID = 'ac-status'
 
 
 # Define callback functions which will be called when certain events happen.
@@ -57,7 +58,7 @@ def connected(client):
 	print('Connected to Adafruit IO!  Listening for {0} changes...'.format(AC_FEED_ID))
 	# Subscribe to changes on the feed.
 	client.subscribe(AC_FEED_ID)
-	# Get existing value from feed so we know the current status.
+	# Get existing value from feed so we match the current user input
 	client.receive(AC_FEED_ID)
 
 def disconnected(client):
@@ -75,7 +76,8 @@ def message(client, feed_id, payload):
 	#Do the next action if the payload is ON:#
 	##########################################
 	
-	if payload == "ON":
+	#If the received feed id is the one that belongs to the AC control, and the payload is ON
+	if feed_id == AC_FEED_ID and payload == "ON":
 		ac_control("ON")
 		print('it is definitely on')
 		
@@ -83,15 +85,20 @@ def message(client, feed_id, payload):
 	#Do the next action if the payload is OFF:#
 	###########################################
 	
-	if payload == "OFF":
+	#If the received feed id is the one that belongs to the AC control, and the payload is OFF
+	if feed_id == AC_FEED_ID and payload == "OFF":
 		ac_control("OFF")
 		print('it is definitely OFF MAN')
 		
 def ac_control(control):
 	if control == "ON":
+		#Let AdaFruitIO know of the current status now
+		client.publish(AC_STATUS_FEED_ID, "ON")
 		pass
 		#TEMPGPIO.output(ac_relay_pin, 1)
 	if control == "OFF":
+		#Let AdaFruitIO know of the current status now
+		client.publish(AC_STATUS_FEED_ID, "OFF")
 		pass
 		#TEMPGPIO.output(ac_relay_pin, 0)
 
