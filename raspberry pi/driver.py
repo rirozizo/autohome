@@ -66,6 +66,11 @@ def disconnected(client):
 	print('Disconnected from Adafruit IO!')
 	sys.exit(1)
 
+
+
+
+##############################################################################################################################
+
 def message(client, feed_id, payload):
 	# Message function will be called when a subscribed feed has a new value.
 	# The feed_id parameter identifies the feed, and the payload parameter has
@@ -78,8 +83,8 @@ def message(client, feed_id, payload):
 	
 	#If the received feed id is the one that belongs to the AC control, and the payload is ON
 	if feed_id == AC_FEED_ID and payload == "ON":
+		print('Turning AC ON')
 		ac_control("ON")
-		print('it is definitely on')
 		
 	###########################################
 	#Do the next action if the payload is OFF:#
@@ -87,22 +92,26 @@ def message(client, feed_id, payload):
 	
 	#If the received feed id is the one that belongs to the AC control, and the payload is OFF
 	if feed_id == AC_FEED_ID and payload == "OFF":
+		print('Turning AC OFF')
 		ac_control("OFF")
-		print('it is definitely OFF MAN')
+
+##############################################################################################################################
 		
 def ac_control(control):
 	if control == "ON":
 		#Let AdaFruitIO know of the current status now
+		print('Setting AC\'s status to ON')
 		client.publish(AC_STATUS_FEED_ID, "ON")
 		pass
 		#TEMPGPIO.output(ac_relay_pin, 1)
 	if control == "OFF":
+		print('Setting AC\'s status to OFF')
 		#Let AdaFruitIO know of the current status now
 		client.publish(AC_STATUS_FEED_ID, "OFF")
 		pass
 		#TEMPGPIO.output(ac_relay_pin, 0)
 
-
+##############################################################################################################################
 
 # Create an MQTT client instance.
 client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
