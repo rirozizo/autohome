@@ -103,13 +103,13 @@ def ac_control(control):
 		print('Setting AC\'s status to ON')
 		client.publish(AC_STATUS_FEED_ID, "ON")
 		pass
-		GPIO.output(ac_relay_pin, 1)
+		GPIO.output(ac_relay_pin, 0)
 	if control == "OFF":
 		print('Setting AC\'s status to OFF')
 		#Let AdaFruitIO know of the current status now
 		client.publish(AC_STATUS_FEED_ID, "OFF")
 		pass
-		GPIO.output(ac_relay_pin, 0)
+		GPIO.output(ac_relay_pin, 1)
 
 ##############################################################################################################################
 
