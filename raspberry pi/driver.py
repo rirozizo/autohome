@@ -102,13 +102,15 @@ def ac_control(control):
 		#Let AdaFruitIO know of the current status now
 		print('Setting AC\'s status to ON')
 		client.publish(AC_STATUS_FEED_ID, "ON")
-		pass
+		#It's counter intuitive to give 0 to the pin for ON, but the relay has a "low-is-on, high-is-off" logic.
+		#So it switches on as soon as it gets powered if we don't do anything about it.
 		GPIO.output(ac_relay_pin, 0)
 	if control == "OFF":
 		print('Setting AC\'s status to OFF')
 		#Let AdaFruitIO know of the current status now
 		client.publish(AC_STATUS_FEED_ID, "OFF")
-		pass
+		#It's counter intuitive to give 0 to the pin for ON, but the relay has a "low-is-on, high-is-off" logic.
+		#So it switches on as soon as it gets powered if we don't do anything about it.
 		GPIO.output(ac_relay_pin, 1)
 
 ##############################################################################################################################
