@@ -44,9 +44,16 @@ ADAFRUIT_IO_KEY = contents
 # (go to https://accounts.adafruit.com to find your username)
 ADAFRUIT_IO_USERNAME = 'rirozizo'
 
-# Set to the ID of the feed to subscribe to for updates.
+# Set the IDs of the feeds to subscribe to for updates.
+MASTER_FEED_ID = 'master'
 AC_FEED_ID = 'ac'
 AC_STATUS_FEED_ID = 'ac-status'
+
+# Set the statuses of global variables
+#This is to keep track of the Master switch so we can disable the control of everything in one switch
+MASTER_DATA = 'OFF'
+#This is to keep track of the last (old) value of the Master switch, so that we can apply the current feeds' data when we switch Master back on
+OLD_MASTER_DATA = 'OFF'
 
 
 # Define callback functions which will be called when certain events happen.
@@ -58,8 +65,9 @@ def connected(client):
 	print('Connected to Adafruit IO!  Listening for {0} changes...'.format(AC_FEED_ID))
 	# Subscribe to changes on the feed.
 	client.subscribe(AC_FEED_ID)
+	client.subscribe(MASTER_FEED_ID)
 	# Get existing value from feed so we match the current user input
-	client.receive(AC_FEED_ID)
+	client.receive(MASTER_FEED_ID)
 
 def disconnected(client):
 	# Disconnected function will be called when the client disconnects.
@@ -76,13 +84,25 @@ def message(client, feed_id, payload):
 	# The feed_id parameter identifies the feed, and the payload parameter has
 	# the new value.
 	print('Feed {0} received new value: {1}'.format(feed_id, payload))
+	# I'm a noob, this took a while to figure out, always add "global" before a variable if you intend on changing it
+	global MASTER_DATA
+	global OLD_MASER_DATA
+	
+	
+	# If we modify the Master switch
+	if feed_id == MASTER_FEED_ID:
+		OLD_MASER_DATA = MASTER_DATA
+		MASTER_DATA = payload
+		# If master is switched from Off to On
+		if MASTER_DATA == "ON" and OLD_MASTER_DATA == "OFF":
+			client.receive(AC_FEED_ID)
 	
 	##########################################
 	#Do the next action if the payload is ON:#
 	##########################################
 	
 	#If the received feed id is the one that belongs to the AC control, and the payload is ON
-	if feed_id == AC_FEED_ID and payload == "ON":
+	if MASTER_DATA == "ON" and feed_id == AC_FEED_ID and payload == "ON":
 		print('Turning AC ON')
 		ac_control("ON")
 		
@@ -91,9 +111,12 @@ def message(client, feed_id, payload):
 	###########################################
 	
 	#If the received feed id is the one that belongs to the AC control, and the payload is OFF
-	if feed_id == AC_FEED_ID and payload == "OFF":
+	if MASTER_DATA == "ON" and feed_id == AC_FEED_ID and payload == "OFF":
 		print('Turning AC OFF')
 		ac_control("OFF")
+	
+	elif MASTER_DATA == "OFF":
+		print('Master seems to be OFF, not doing anything')
 
 ##############################################################################################################################
 		
