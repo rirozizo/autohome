@@ -34,7 +34,7 @@ GPIO.setup(ac_relay_pin, GPIO.OUT)
 # so make sure not to publish it when you publish this code!
 
 # I used a separate file to read the key from. This is done so that we don't expose the key in the code itself, but a separatefile
-f=open("aiokey.txt", "r")
+f=open("/home/pi/autohome/aiokey.txt", "r")
 contents =f.read()
 contents = contents.strip()
 #print(contents)

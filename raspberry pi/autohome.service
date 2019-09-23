@@ -1,0 +1,15 @@
+[Unit]
+Description=Home Automation Startup Script
+
+Wants=network.target
+After=syslog.target network-online.target
+
+[Service]
+Type=simple
+ExecStart=sh /home/pi/autohome/startup.sh
+Restart=on-failure
+RestartSec=10
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

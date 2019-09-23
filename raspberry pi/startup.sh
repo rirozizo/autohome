@@ -1,0 +1,1 @@
+/usr/bin/python3 /home/pi/autohome/driver.py > /home/pi/autohome/log
