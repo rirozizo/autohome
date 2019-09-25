@@ -4,28 +4,28 @@
 ## You can find the project with README at github.com/rirozizo/AutoHome									    ##
 ##############################################################################################################
 
-#Importing needed libraries
+# Importing needed libraries
 import sys
 from Adafruit_IO import MQTTClient
 import RPi.GPIO as GPIO
 
-#library for time and sleep, might need later
+# Library for time and sleep, might need later
 #from time import sleep
 
-#Dummy relay pin number (GPIO number and NOT physical pins)
+# Dummy relay pin number (GPIO number and NOT physical pins)
 ac_relay_pin = 26
 GPIO.setmode(GPIO.BCM)
 
-#Set GPIO pin to OUT
+# Set GPIO pin to OUT
 GPIO.setup(ac_relay_pin, GPIO.OUT)
 
-#Give HIGH
+# Give HIGH
 #GPIO.output(ac_relay_pin, 1)
 
-#Give LOW
+# Give LOW
 #GPIO.output(ac_relay_pin, 0)
 
-#Sleep for 5 seconds
+# Sleep for 5 seconds
 #sleep(5)
 
 
@@ -51,9 +51,9 @@ AC_STATUS_FEED_ID = 'ac-status'
 SERVICE_STATUS_FEED_ID = 'service-status'
 
 # Set the statuses of global variables
-#This is to keep track of the Master switch so we can disable the control of everything in one switch
+# This is to keep track of the Master switch so we can disable the control of everything in one switch
 MASTER_DATA = 'OFF'
-#This is to keep track of the last (old) value of the Master switch, so that we can apply the current feeds' data when we switch Master back on
+# This is to keep track of the last (old) value of the Master switch, so that we can apply the current feeds' data when we switch Master back on
 OLD_MASTER_DATA = 'OFF'
 
 
@@ -69,6 +69,8 @@ def connected(client):
 	client.subscribe(MASTER_FEED_ID)
 	# Get existing value from feed so we match the current user input
 	client.receive(MASTER_FEED_ID)
+	
+	# Set the AdaFruitIO Service Status Indicator to ON
 	client.publish(SERVICE_STATUS_FEED_ID, "ON")
 
 
@@ -100,20 +102,20 @@ def message(client, feed_id, payload):
 		if MASTER_DATA == "ON":
 			client.receive(AC_FEED_ID)
 	
-	##########################################
-	#Do the next action if the payload is ON:#
-	##########################################
+	############################################
+	# Do the next action if the payload is ON: #
+	############################################
 	
 	#If the received feed id is the one that belongs to the AC control, and the payload is ON
 	if MASTER_DATA == "ON" and feed_id == AC_FEED_ID and payload == "ON":
 		print('Turning AC ON')
 		ac_control("ON")
 		
-	###########################################
-	#Do the next action if the payload is OFF:#
-	###########################################
+	#############################################
+	# Do the next action if the payload is OFF: #
+	#############################################
 	
-	#If the received feed id is the one that belongs to the AC control, and the payload is OFF
+	# If the received feed id is the one that belongs to the AC control, and the payload is OFF
 	if MASTER_DATA == "ON" and feed_id == AC_FEED_ID and payload == "OFF":
 		print('Turning AC OFF')
 		ac_control("OFF")
@@ -125,18 +127,18 @@ def message(client, feed_id, payload):
 		
 def ac_control(control):
 	if control == "ON":
-		#Let AdaFruitIO know of the current status now
+		# Let AdaFruitIO know of the current status now
 		print('Setting AC\'s status to ON')
 		client.publish(AC_STATUS_FEED_ID, "ON")
-		#It's counter intuitive to give 0 to the pin for ON, but the relay has a "low-is-on, high-is-off" logic.
-		#So it switches on as soon as it gets powered if we don't do anything about it.
+		# It's counter intuitive to give 0 to the pin for ON, but the relay has a "low-is-on, high-is-off" logic.
+		# So it switches on as soon as it gets powered if we don't do anything about it.
 		GPIO.output(ac_relay_pin, 0)
 	if control == "OFF":
 		print('Setting AC\'s status to OFF')
-		#Let AdaFruitIO know of the current status now
+		# Let AdaFruitIO know of the current status now
 		client.publish(AC_STATUS_FEED_ID, "OFF")
-		#It's counter intuitive to give 0 to the pin for ON, but the relay has a "low-is-on, high-is-off" logic.
-		#So it switches on as soon as it gets powered if we don't do anything about it.
+		# It's counter intuitive to give 0 to the pin for ON, but the relay has a "low-is-on, high-is-off" logic.
+		# So it switches on as soon as it gets powered if we don't do anything about it.
 		GPIO.output(ac_relay_pin, 1)
 
 ##############################################################################################################################
@@ -158,6 +160,8 @@ client.connect()
 try:
 	client.loop_blocking()
 except:
+	# Set the AdaFruitIO Service Status Indicator to ON
 	client.publish(SERVICE_STATUS_FEED_ID, "OFF")
 	print('\nExited Successfully \n')
+	# Cleanup GPIO before exiting
 	GPIO.cleanup()
