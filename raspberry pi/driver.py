@@ -48,6 +48,7 @@ ADAFRUIT_IO_USERNAME = 'rirozizo'
 MASTER_FEED_ID = 'master'
 AC_FEED_ID = 'ac'
 AC_STATUS_FEED_ID = 'ac-status'
+SERVICE_STATUS_FEED_ID = 'service-status'
 
 # Set the statuses of global variables
 #This is to keep track of the Master switch so we can disable the control of everything in one switch
@@ -68,6 +69,8 @@ def connected(client):
 	client.subscribe(MASTER_FEED_ID)
 	# Get existing value from feed so we match the current user input
 	client.receive(MASTER_FEED_ID)
+	client.publish(SERVICE_STATUS_FEED_ID, "ON")
+
 
 def disconnected(client):
 	# Disconnected function will be called when the client disconnects.
@@ -87,14 +90,14 @@ def message(client, feed_id, payload):
 	# I'm a noob, this took a while to figure out, always add "global" before a variable if you intend on changing it
 	global MASTER_DATA
 	global OLD_MASER_DATA
-	
+	global MASTER_FEED_ID
 	
 	# If we modify the Master switch
 	if feed_id == MASTER_FEED_ID:
 		OLD_MASER_DATA = MASTER_DATA
 		MASTER_DATA = payload
 		# If master is switched from Off to On
-		if MASTER_DATA == "ON" and OLD_MASTER_DATA == "OFF":
+		if MASTER_DATA == "ON":
 			client.receive(AC_FEED_ID)
 	
 	##########################################
@@ -153,7 +156,8 @@ client.connect()
 # received.	 Note there are other options for running the event loop like doing
 # so in a background thread--see the mqtt_client.py example to learn more.
 try:
-	 client.loop_blocking()
+	client.loop_blocking()
 except:
-	 print('\nExited Successfully \n')
-	 GPIO.cleanup()
+	client.publish(SERVICE_STATUS_FEED_ID, "OFF")
+	print('\nExited Successfully \n')
+	GPIO.cleanup()

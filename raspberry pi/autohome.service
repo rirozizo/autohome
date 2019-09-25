@@ -6,10 +6,16 @@ After=syslog.target network-online.target
 
 [Service]
 Type=simple
-ExecStart=sh /home/pi/autohome/startup.sh
+
+#ExecStart=sh /home/pi/autohome/startup.sh
+ExecStart=/usr/bin/python3 /home/pi/autohome/driver.py > /home/pi/autohome/log
 Restart=on-failure
 RestartSec=10
+
 KillMode=process
+
+#ExecStop=sh /home/pi/autohome/shutdown.sh
+ExecStop= /bin/kill -2 $MAINPID 
 
 [Install]
 WantedBy=multi-user.target
