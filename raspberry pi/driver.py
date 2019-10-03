@@ -98,7 +98,7 @@ def message(client, feed_id, payload):
 	if feed_id == MASTER_FEED_ID:
 		OLD_MASER_DATA = MASTER_DATA
 		MASTER_DATA = payload
-		# If master is switched from Off to On
+		# If master is On, get the latest AC Feed data
 		if MASTER_DATA == "ON":
 			client.receive(AC_FEED_ID)
 	
@@ -120,6 +120,7 @@ def message(client, feed_id, payload):
 		print('Turning AC OFF')
 		ac_control("OFF")
 	
+	# If the Master switch is off, we don't do anything
 	elif MASTER_DATA == "OFF":
 		print('Master seems to be OFF, not doing anything')
 
@@ -130,16 +131,13 @@ def ac_control(control):
 		# Let AdaFruitIO know of the current status now
 		print('Setting AC\'s status to ON')
 		client.publish(AC_STATUS_FEED_ID, "ON")
-		# It's counter intuitive to give 0 to the pin for ON, but the relay has a "low-is-on, high-is-off" logic.
-		# So it switches on as soon as it gets powered if we don't do anything about it.
-		GPIO.output(ac_relay_pin, 0)
+		# The relay that I happen to use it an "Active-Low" relay, so I used an NPN Transistor to fix its odd behaviour
+		GPIO.output(ac_relay_pin, 1)
 	if control == "OFF":
 		print('Setting AC\'s status to OFF')
 		# Let AdaFruitIO know of the current status now
 		client.publish(AC_STATUS_FEED_ID, "OFF")
-		# It's counter intuitive to give 0 to the pin for ON, but the relay has a "low-is-on, high-is-off" logic.
-		# So it switches on as soon as it gets powered if we don't do anything about it.
-		GPIO.output(ac_relay_pin, 1)
+		GPIO.output(ac_relay_pin, 0)
 
 ##############################################################################################################################
 
