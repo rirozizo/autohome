@@ -102,18 +102,18 @@ def message(client, feed_id, payload):
 		if MASTER_DATA == "ON":
 			client.receive(AC_FEED_ID)
 	
-	############################################
-	# Do the next action if the payload is ON: #
-	############################################
+	##########################################
+	#Do the next action if the payload is ON:#
+	##########################################
 	
-	#If the received feed id is the one that belongs to the AC control, and the payload is ON
+	# If the received feed id is the one that belongs to the AC control, and the payload is ON
 	if MASTER_DATA == "ON" and feed_id == AC_FEED_ID and payload == "ON":
 		print('Turning AC ON')
 		ac_control("ON")
 		
-	#############################################
-	# Do the next action if the payload is OFF: #
-	#############################################
+	###########################################
+	#Do the next action if the payload is OFF:#
+	###########################################
 	
 	# If the received feed id is the one that belongs to the AC control, and the payload is OFF
 	if MASTER_DATA == "ON" and feed_id == AC_FEED_ID and payload == "OFF":
@@ -158,7 +158,7 @@ client.connect()
 try:
 	client.loop_blocking()
 except:
-	# Set the AdaFruitIO Service Status Indicator to ON
+	# Set the AdaFruitIO Service Status Indicator to OFF
 	client.publish(SERVICE_STATUS_FEED_ID, "OFF")
 	print('\nExited Successfully \n')
 	# Cleanup GPIO before exiting
