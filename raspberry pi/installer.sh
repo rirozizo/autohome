@@ -7,6 +7,8 @@ echo "Make sure all the files are in /home/pi/autohome/ (Including this installe
 echo "DON\'T FORGET TO PUT YOUR AIO KEY in aiokey.txt!!!"
 echo "Installing adafruit-io python package"
 pip3 install adafruit-io
+echo "Installing Rpi.GPIO python package"
+pip3 install RPi.GPIO
 echo "Adding autohome service to your system"
 cp /home/pi/autohome/autohome.service /etc/systemd/system/
 echo "Reloading systemctl daemon"
