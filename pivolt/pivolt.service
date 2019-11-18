@@ -1,0 +1,19 @@
+[Unit]
+Description=Raspberry Pi Under-Voltage Detection Script
+
+Wants=network.target
+After=syslog.target network-online.target
+
+[Service]
+Type=simple
+
+ExecStart=/usr/bin/python3 /home/pi/pivolt/driver.py > /home/pi/pivolt/log
+Restart=on-failure
+RestartSec=10
+
+KillMode=process
+
+ExecStop= /bin/kill -2 $MAINPID 
+
+[Install]
+WantedBy=multi-user.target
