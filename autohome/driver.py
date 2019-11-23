@@ -5,7 +5,7 @@
 ##############################################################################################################
 
 # Importing needed libraries
-import sys
+import sys, os
 from Adafruit_IO import MQTTClient
 import RPi.GPIO as GPIO
 
@@ -49,6 +49,10 @@ MASTER_FEED_ID = 'master'
 AC_FEED_ID = 'ac'
 AC_STATUS_FEED_ID = 'ac-status'
 SERVICE_STATUS_FEED_ID = 'service-status'
+TASMOTA1_FEED_ID = 'tasmota1'
+TASMOTA2_FEED_ID = 'tasmota2'
+TASMOTA1_STATUS_FEED_ID = 'tasmota1-status'
+TASMOTA2_STATUS_FEED_ID = 'tasmota2-status'
 
 # Set the statuses of global variables
 # This is to keep track of the Master switch so we can disable the control of everything in one switch
@@ -67,6 +71,8 @@ def connected(client):
 	# Subscribe to changes on the feed.
 	client.subscribe(AC_FEED_ID)
 	client.subscribe(MASTER_FEED_ID)
+	client.subscribe(TASMOTA1_FEED_ID)
+	client.subscribe(TASMOTA2_FEED_ID)
 	# Get existing value from feed so we match the current user input
 	client.receive(MASTER_FEED_ID)
 	
@@ -101,6 +107,8 @@ def message(client, feed_id, payload):
 		# If master is On, get the latest AC Feed data
 		if MASTER_DATA == "ON":
 			client.receive(AC_FEED_ID)
+			client.receive(TASMOTA1_FEED_ID)
+			client.receive(TASMOTA2_FEED_ID)
 	
 	##########################################
 	#Do the next action if the payload is ON:#
@@ -120,6 +128,23 @@ def message(client, feed_id, payload):
 		print('Turning AC OFF')
 		ac_control("OFF")
 	
+	# Tasmota control
+	if MASTER_DATA == "ON" and feed_id == TASMOTA1_FEED_ID and payload == "ON":
+		print('Turning Tasmota Relay 1 ON')
+		tasmota_control(1, "ON")
+
+	if MASTER_DATA == "ON" and feed_id == TASMOTA1_FEED_ID and payload == "OFF":
+		print('Turning Tasmota Relay 1 OFF')
+		tasmota_control(1, "OFF")
+
+	if MASTER_DATA == "ON" and feed_id == TASMOTA2_FEED_ID and payload == "ON":
+		print('Turning Tasmota Relay 2 ON')
+		tasmota_control(2, "ON")
+
+	if MASTER_DATA == "ON" and feed_id == TASMOTA2_FEED_ID and payload == "OFF":
+		print('Turning Tasmota Relay 2 OFF')
+		tasmota_control(2, "OFF")
+
 	# If the Master switch is off, we don't do anything
 	elif MASTER_DATA == "OFF":
 		print('Master seems to be OFF, not doing anything')
@@ -130,15 +155,28 @@ def ac_control(control):
 	if control == "ON":
 		# Let AdaFruitIO know of the current status now
 		print('Setting AC\'s status to ON')
-		client.publish(AC_STATUS_FEED_ID, "ON")
+#		client.publish(AC_STATUS_FEED_ID, "ON")
 		# The relay that I happen to use it an "Active-Low" relay, so I used an NPN Transistor to fix its odd behaviour
 		GPIO.output(ac_relay_pin, 1)
 	if control == "OFF":
 		print('Setting AC\'s status to OFF')
 		# Let AdaFruitIO know of the current status now
-		client.publish(AC_STATUS_FEED_ID, "OFF")
+#		client.publish(AC_STATUS_FEED_ID, "OFF")
 		GPIO.output(ac_relay_pin, 0)
 
+def tasmota_control(relay, control):
+	if relay == 1 and control == "ON":
+		os.popen('mosquitto_pub -t tasmota/cmnd/power1 -m ON').read()
+#		client.publish(TASMOTA1_STATUS_FEED_ID, "ON")
+	if relay == 1 and control == "OFF":
+		os.popen('mosquitto_pub -t tasmota/cmnd/power1 -m OFF').read()
+#		client.publish(TASMOTA1_STATUS_FEED_ID, "OFF")
+	if relay == 2 and control == "ON":
+		os.popen('mosquitto_pub -t tasmota/cmnd/power2 -m ON').read()
+#		client.publish(TASMOTA2_STATUS_FEED_ID, "ON")
+	if relay == 2 and control == "OFF":
+		os.popen('mosquitto_pub -t tasmota/cmnd/power2 -m OFF').read()
+#		client.publish(TASMOTA2_STATUS_FEED_ID, "OFF")
 ##############################################################################################################################
 
 # Create an MQTT client instance.
