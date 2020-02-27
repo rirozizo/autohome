@@ -1,0 +1,1 @@
+This directory is where motion will store all of its saved clips
