@@ -1,0 +1,21 @@
+[Unit]
+Description=Doorbell Automation Startup Script
+
+Wants=network.target
+After=syslog.target network-online.target
+
+[Service]
+Type=simple
+
+#ExecStart=sh /home/pi/autodoorbell/startup.sh
+ExecStart=/usr/bin/python3 /home/pi/autodoorbell/driver.py > /home/pi/autodoorbell/log
+Restart=on-failure
+RestartSec=10
+
+KillMode=process
+
+#ExecStop=sh /home/pi/autodoorbell/shutdown.sh
+ExecStop= /bin/kill -2 $MAINPID 
+
+[Install]
+WantedBy=multi-user.target
