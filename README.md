@@ -1,3 +1,5 @@
+![AutoHome](https://pbs.twimg.com/media/ETkrkAfWsAMKYvO?format=jpg)
+
 # AutoHome
 A System to control any Home Equipment via a Raspberry Pi
 
