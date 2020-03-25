@@ -9,8 +9,6 @@ echo "Installing adafruit-io python package"
 pip3 install adafruit-io
 echo "Installing Rpi.GPIO python package"
 pip3 install RPi.GPIO
-echo "Installing paho-mqtt"
-pip3 install paho-mqtt
 echo "Adding autohome service to your system"
 cp /home/pi/autohome/autohome.service /etc/systemd/system/
 echo "Reloading systemctl daemon"

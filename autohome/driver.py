@@ -8,7 +8,6 @@
 import sys, os
 from Adafruit_IO import MQTTClient
 import RPi.GPIO as GPIO
-import paho.mqtt.client as mqtt
 
 # Library for time and sleep, might need later
 #from time import sleep
@@ -50,10 +49,6 @@ MASTER_FEED_ID = 'master'
 AC_FEED_ID = 'ac'
 AC_STATUS_FEED_ID = 'ac-status'
 SERVICE_STATUS_FEED_ID = 'service-status'
-TASMOTA1_FEED_ID = 'tasmota1'
-TASMOTA2_FEED_ID = 'tasmota2'
-TASMOTA1_STATUS_FEED_ID = 'tasmota1-status'
-TASMOTA2_STATUS_FEED_ID = 'tasmota2-status'
 
 # Set the statuses of global variables
 # This is to keep track of the Master switch so we can disable the control of everything in one switch
@@ -74,8 +69,6 @@ def connected(client):
 	# Subscribe to changes on the feed.
 	client.subscribe(AC_FEED_ID)
 	client.subscribe(MASTER_FEED_ID)
-	client.subscribe(TASMOTA1_FEED_ID)
-	client.subscribe(TASMOTA2_FEED_ID)
 	# Get existing value from feed so we match the current user input
 	client.receive(MASTER_FEED_ID)
 
@@ -109,8 +102,6 @@ def message(client, feed_id, payload):
 		# If master is On, get the latest AC Feed data
 		if MASTER_DATA == "ON":
 			client.receive(AC_FEED_ID)
-			client.receive(TASMOTA1_FEED_ID)
-			client.receive(TASMOTA2_FEED_ID)
 	
 	##########################################
 	#Do the next action if the payload is ON:#
@@ -129,23 +120,6 @@ def message(client, feed_id, payload):
 	if MASTER_DATA == "ON" and feed_id == AC_FEED_ID and payload == "OFF":
 		print('Turning AC OFF')
 		ac_control("OFF")
-	
-	# Tasmota control
-	if MASTER_DATA == "ON" and feed_id == TASMOTA1_FEED_ID and payload == "ON":
-		print('Turning Tasmota Relay 1 ON')
-		tasmota_control(1, "ON")
-
-	if MASTER_DATA == "ON" and feed_id == TASMOTA1_FEED_ID and payload == "OFF":
-		print('Turning Tasmota Relay 1 OFF')
-		tasmota_control(1, "OFF")
-
-	if MASTER_DATA == "ON" and feed_id == TASMOTA2_FEED_ID and payload == "ON":
-		print('Turning Tasmota Relay 2 ON')
-		tasmota_control(2, "ON")
-
-	if MASTER_DATA == "ON" and feed_id == TASMOTA2_FEED_ID and payload == "OFF":
-		print('Turning Tasmota Relay 2 OFF')
-		tasmota_control(2, "OFF")
 
 	# If the Master switch is off, we don't do anything
 	elif MASTER_DATA == "OFF":
@@ -166,24 +140,6 @@ def ac_control(control):
 		client.publish(AC_STATUS_FEED_ID, "OFF")
 		GPIO.output(ac_relay_pin, 0)
 
-#No SONOFF Control for now, even though we can make it happen
-def tasmota_control(relay, control):
-	if relay == 1 and control == "ON":
-		pass
-#		os.popen('mosquitto_pub -t cmnd/tasmota/power1 -m ON').read()
-#		client.publish(TASMOTA1_STATUS_FEED_ID, "ON")
-	if relay == 1 and control == "OFF":
-		pass
-#		os.popen('mosquitto_pub -t cmnd/tasmota/power1 -m OFF').read()
-#		client.publish(TASMOTA1_STATUS_FEED_ID, "OFF")
-	if relay == 2 and control == "ON":
-		pass
-#		os.popen('mosquitto_pub -t cmnd/tasmota/power2 -m ON').read()
-#		client.publish(TASMOTA2_STATUS_FEED_ID, "ON")
-	if relay == 2 and control == "OFF":
-		pass
-#		os.popen('mosquitto_pub -t cmnd/tasmota/power2 -m OFF').read()
-#		client.publish(TASMOTA2_STATUS_FEED_ID, "OFF")
 ##############################################################################################################################
 
 # Create an MQTT client instance.
@@ -197,49 +153,15 @@ client.on_message	 = message
 # Connect to the Adafruit IO server.
 client.connect()
 
-##########################################
-##              TASMOTA                 ##
-##########################################
-def on_connect(mqttclient, userdata, flags, rc):
-	print("Connected with result code "+str(rc))
-	#On Tasmota's side we set the Topic to "tasmota" and the Full Topic to "%topic%/"
-	#Tasmota's Last Will and Testament becomes "tasmota/LWT", this is how we monitor if the SONOFF Device is on or not
-	mqttclient.subscribe("tasmota/LWT")
-
-def on_message(mqttclient, userdata, msg):
-	#If the SONOFF sends a signal that it's Online
-	if msg.payload.decode() == "Online":
-		print("Fridge is Online!")
-		client.publish(TASMOTA2_STATUS_FEED_ID, "ON")
-	#If the SONOFF goes offline, we receive its LWT Message
-	if msg.payload.decode() == "Offline":
-		print("Fridge is Offline!")
-		client.publish(TASMOTA2_STATUS_FEED_ID, "OFF")
-
-mqttclient = mqtt.Client()
-mqttclient.connect('localhost',1883,5)
-
-mqttclient.on_connect = on_connect
-mqttclient.on_message = on_message
-
-mqttclient.loop_start()
-
-
-
 
 # Start a message loop that blocks forever waiting for MQTT messages to be
 # received.	 Note there are other options for running the event loop like doing
 # so in a background thread--see the mqtt_client.py example to learn more.
 try:
-	##########################################
-	##              ADAFRUIT                ##
-	##########################################
 	client.loop_blocking()
 except:
 	# Set the AdaFruitIO Service Status Indicator to OFF
 	client.publish(SERVICE_STATUS_FEED_ID, "OFF")
 	print('\nExited Successfully \n')
-	# Kill MQTT Client Background Process
-	mqttclient.loop_stop()
 	# Cleanup GPIO before exiting
 	GPIO.cleanup()
