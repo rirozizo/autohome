@@ -14,4 +14,4 @@ print('AutoHomePiBot is up')
 
 def send():
 	print('sending pic via def send')
-	bot.sendPhoto(<put id here>, open('../motion/lastsnap.jpg', 'rb'))
+	bot.sendPhoto(<put id here>, open('/home/pi/motion/lastsnap.jpg', 'rb'))

@@ -3,14 +3,13 @@
 ### IMPORTS ###
 import os # Allows us to run a program
 from time import sleep  # Allows us to call the sleep function to slow down our loop
-import RPi.GPIO as GPIO # Allows us to call our GPIO pins and names it just GPIO
 import botdriver
-GPIO.setmode(GPIO.BCM)  # Set's GPIO pins to BCM GPIO numbering
+import paho.mqtt.client as mqtt
 
 import subprocess as sp
 import os
-tmp = os.popen('sh kill_motion.sh').read()
-tmp = os.popen('sh start_motion.sh').read()
+tmp = os.popen('sh /home/pi/autodoorbell/kill_motion.sh').read()
+tmp = os.popen('sh /home/pi/autodoorbell/start_motion.sh').read()
 
 
 
@@ -25,40 +24,37 @@ class bcolors:
 	BOLD = '\033[1m'
 	UNDERLINE = '\033[4m'
 
-### BUTTON PRESS DETECTION ###
+### BUTTON PRESS DETECTION DEPRECATED! WE'RE NOW USING A SEPARATE ESP8266 BOARD FOR THIS###
 # Set input pin to use the internal pull down
-GPIO.setup(16, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+#GPIO.setup(16, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 # Our test relay is the same as the AC Relay for now
-GPIO.setup(13, GPIO.OUT)
+#GPIO.setup(13, GPIO.OUT)
 
 
-# Functions to run when the button is pressed.
-def Input_1(channel):
-	# Put whatever the Button does in here
-	GPIO.output(13, 1)
-	print(bcolors.OKGREEN + 'DING!' + bcolors.ENDC)
-	print(bcolors.FAIL + 'DONG!' + bcolors.ENDC)
-	### DO WHATEVER HERE ###
-	# make the telegram bot upload latest clip
-	# don't repeat until upload is done (maybe make a "Busy" file to contrl this)
-	sleep(0.3)
-	GPIO.output(13, 0)
-	tmp = os.popen('sh snap.sh').read()
-	sleep(0.3)
-	botdriver.send()
+def on_connect(mqttclient, userdata, flags, rc):
+        print("Connected with result code "+str(rc))
+        #On ESP's side we set the Topic to "doorbell"
+        mqttclient.subscribe("doorbell")
 
-# Does a Callback to the appropriate Input function.  Also debounces to prevent clicking the button multiple times a second.
-GPIO.add_event_detect(16, GPIO.RISING, callback=Input_1, bouncetime=2000) # Waiting for Button 1 to be pressed.
+def on_message(mqttclient, userdata, msg):
+        #If the ESP8266 send a "DING", which is when someone rings the doorbell
+        if msg.payload.decode() == "DING":
+                print("DING!")
+                ### DO WHATEVER HERE ###
+                tmp = os.popen('sh /home/pi/autodoorbell/snap.sh').read()
+                sleep(0.3)
+                botdriver.send()
 
-# Starts a neverending loop otherwise the script will just quit.
+mqttclient = mqtt.Client()
+mqttclient.connect('localhost',1883,5)
+
+mqttclient.on_connect = on_connect
+mqttclient.on_message = on_message
+
+
 try:
-	while True:
-		print("Waiting for input.") # Insert Random Loop Junk
-
-
-		sleep(60);		   # Sleeps for a minute to save CPU cycles.  Any interrupt will break this.
+	print('loop')
+	mqttclient.loop_forever()
 
 except KeyboardInterrupt:
-	tmp = os.popen('sh kill_motion.sh').read()
-#	GPIO.cleanup()
-GPIO.cleanup()
+	tmp = os.popen('sh /home/pi/autodoorbell/kill_motion.sh').read()
