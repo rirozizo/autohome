@@ -14,8 +14,8 @@ RestartSec=10
 
 KillMode=process
 
-#ExecStop=sh /home/pi/autodoorbell/shutdown.sh
-ExecStop= /bin/kill -2 $MAINPID 
+ExecStop=sh /home/pi/autodoorbell/kill_motion.sh
+#ExecStop=/etc/init.d/motion stop; /bin/kill -2 $MAINPID 
 
 [Install]
 WantedBy=multi-user.target
